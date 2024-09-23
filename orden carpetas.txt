@@ -42,3 +42,5 @@ test/                       # Tests
 └── e2e/
 
 modificar esto
+
+npx prisma migrate dev --name campoClave_usuarios

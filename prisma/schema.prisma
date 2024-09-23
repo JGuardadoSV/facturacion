@@ -20,6 +20,7 @@ model Usuario {
   email     String   @unique
   nombreCompleto      String?
   apellidos      String?
+  clave      String?
   rol      Role     @default(USER)
 }
 

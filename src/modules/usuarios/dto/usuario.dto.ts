@@ -14,5 +14,9 @@ export class CreateUsuarioDto {
   apellidos?: string;
 
   @IsOptional()
+  @IsString()
+  clave?: string;
+
+  @IsOptional()
   rol?: Role;
 }

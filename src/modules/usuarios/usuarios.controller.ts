@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsuariosService } from '../../servicios/usuarios/usuarios.service';
+import { UsuariosService } from '../../modules/usuarios/usuarios.service';
 import { Prisma, Usuario } from '@prisma/client';
-import { CreateUsuarioDto } from 'src/dtos/usuario.dto';
-import { UpdateUsuarioDto } from 'src/dtos/update-usuario.dto';
+import { CreateUsuarioDto } from 'src/modules/usuarios/dto/usuario.dto';
+import { UpdateUsuarioDto } from 'src/modules/usuarios/dto/update-usuario.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
