@@ -1,0 +1,42 @@
+src/
+│
+├── config/                 # Configuraciones de la aplicación
+│   ├── database.config.ts
+│   └── app.config.ts
+│
+├── modules/                # Módulos de la aplicación
+│   ├── users/              # Módulo de usuarios
+│   │   ├── dto/            # Data Transfer Objects
+│   │   ├── entities/       # Entidades de la base de datos
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── users.module.ts
+│   │   └── users.repository.ts
+│   │
+│   ├── auth/               # Módulo de autenticación
+│   │   ├── dto/
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   └── auth.module.ts
+│   │
+│   └── ... (otros módulos)
+│
+├── common/                 # Código compartido entre módulos
+│   ├── decorators/
+│   ├── filters/
+│   ├── guards/
+│   ├── interceptors/
+│   └── pipes/
+│
+├── utils/                  # Utilidades y helpers
+│
+├── interfaces/             # Interfaces compartidas
+│
+├── app.module.ts           # Módulo principal de la aplicación
+├── app.controller.ts       # Controlador principal (si es necesario)
+└── main.ts                 # Punto de entrada de la aplicación
+
+test/                       # Tests
+│
+├── unit/
+└── e2e/
