@@ -31,6 +31,14 @@ export class UsuariosController {
       });
   }
 
+  @Patch('asignar-empresa/:id')
+  asignarEmpresa(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuariosService.updateUsuario({
+        where: { id: Number(id) },
+        data: updateUsuarioDto,
+      });
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usuariosService.deleteUsuario({ id: Number(id) });

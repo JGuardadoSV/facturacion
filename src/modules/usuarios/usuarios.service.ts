@@ -11,6 +11,9 @@ export class UsuariosService {
   ): Promise<Usuario | null> {
     return this.prisma.usuario.findUnique({
       where: usuarioWhereUniqueInput,
+      include: {
+        empresa: true,
+      },
     });
   }
 
@@ -28,6 +31,9 @@ export class UsuariosService {
       cursor,
       where,
       orderBy,
+      include: {
+        empresa: true,
+      },
     });
   }
 
@@ -47,6 +53,8 @@ export class UsuariosService {
       where,
     });
   }
+
+  
 
   async deleteUsuario(where: Prisma.UsuarioWhereUniqueInput): Promise<Usuario> {
     return this.prisma.usuario.delete({

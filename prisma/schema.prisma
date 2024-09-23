@@ -22,10 +22,28 @@ model Usuario {
   apellidos      String?
   clave      String?
   rol      Role     @default(USER)
+  empresaId       Int?
+  empresa         Empresa? @relation(fields: [empresaId], references: [idEmpresa])
 }
 
+//****************************************
+
+model Empresa {
+  idEmpresa              Int        @id @default(autoincrement())
+  nombreEmpresa          String
+  direccion String
+  emailcorporativo String?
+  telefono String?
+  iva String?
+  nit String?
+  createdAt       DateTime   @default(now())
+  usuarios        Usuario[]  // Relación con usuarios
+  
+}
 
 enum Role {
+  SUPERADMIN // rol solo para el dueño de todo el sistema
   USER
   ADMIN
 }
+

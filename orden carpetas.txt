@@ -43,4 +43,4 @@ test/                       # Tests
 
 modificar esto
 
-npx prisma migrate dev --name campoClave_usuarios
+npx prisma migrate dev --name entidad_empresa
