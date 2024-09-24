@@ -43,4 +43,6 @@ test/                       # Tests
 
 modificar esto
 
-npx prisma migrate dev --name entidad_empresa
+npx prisma migrate dev --name productos_vent_com_proveedores
+
+
