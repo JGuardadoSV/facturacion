@@ -105,8 +105,8 @@ model Proveedor {
   direccion     String
   iva           String?
   nit           String?
-  empresaId     Int //Para saber a que empresa pertenece
-  Empresa       Empresa  @relation(fields: [empresaId], references: [idEmpresa])
+  empresaId     Int? //Para saber a que empresa pertenece
+  Empresa       Empresa? @relation(fields: [empresaId], references: [idEmpresa])
   compras       Compra[]
 }
 
