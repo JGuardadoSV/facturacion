@@ -13,6 +13,9 @@ import { ClientesService } from './modules/clientes/clientes.service';
 import { ProveedorModule } from './modules/proveedores/proveedores.module';
 import { ProveedorController } from './modules/proveedores/proveedores.controller';
 import { ProveedoresService } from './modules/proveedores/proveedores.service';
+import { ProductosModule } from './modules/productos/productos.module';
+import { ProductosController } from './modules/productos/productos.controller';
+import { ProductosService } from './modules/productos/productos.service';
 
 @Module({
   imports: [
@@ -21,12 +24,14 @@ import { ProveedoresService } from './modules/proveedores/proveedores.service';
     EmpresaModule,
     ClientesModule,
     ProveedorModule,
+    ProductosModule,
   ],
   controllers: [
     AppController,
     UsuariosController,
     EmpresaController,
     ProveedorController,
+    ProductosController,
   ],
   providers: [
     AppService,
@@ -34,6 +39,7 @@ import { ProveedoresService } from './modules/proveedores/proveedores.service';
     EmpresaService,
     ClientesService,
     ProveedoresService,
+    ProductosService,
   ],
 })
 export class AppModule {}
