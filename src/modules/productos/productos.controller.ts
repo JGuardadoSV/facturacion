@@ -8,16 +8,19 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ProductosService } from './productos.service';
-import { Prisma, Producto } from '@prisma/client';
 import { CreateProductoDto } from './dto/producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('productos')
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
   @Post()
-  @Post()
+  @ApiOperation({ summary: 'Crea un nuevo producto' })
+  @ApiResponse({ status: 201, description: 'Producto creado.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.productosService.createProducto({
       nombre: createProductoDto.nombre,
@@ -32,18 +35,27 @@ export class ProductosController {
   }
 
   @Get(':empresaId')
+  @ApiOperation({ summary: 'Obtiene todos los Productos' })
+  @ApiResponse({ status: 200, description: 'Productos encontrados.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   findAll(@Param('empresaId') empresaId: string) {
     const id = parseInt(empresaId, 10);
     return this.productosService.productos(id, {});
   }
 
   @Get(':id/:empresaId')
+  @ApiOperation({ summary: 'Obtiene un solo Producto' })
+  @ApiResponse({ status: 200, description: 'Producto encontrado.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   findOne(@Param('id') id: string, @Param('empresaId') empresaId: string) {
     const idempresa = parseInt(empresaId, 10);
     return this.productosService.producto(Number(id), idempresa);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualiza un solo Producto' })
+  @ApiResponse({ status: 200, description: 'Producto actualizado.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   update(
     @Param('id') id: string,
     @Body() updateProductoDto: UpdateProductoDto,
@@ -55,6 +67,9 @@ export class ProductosController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un solo Producto' })
+  @ApiResponse({ status: 200, description: 'Producto eliminado.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   remove(@Param('id') id: string) {
     return this.productosService.deleteProducto({ id: Number(id) });
   }
