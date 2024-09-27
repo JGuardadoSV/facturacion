@@ -39,9 +39,7 @@ export class ClientesService {
   }
 
   async createCliente(data: Prisma.ClienteCreateInput): Promise<Cliente> {
-    return this.prisma.cliente.create({
-      data,
-    });
+    return this.prisma.cliente.create({ data });
   }
 
   async updateCliente(params: {
