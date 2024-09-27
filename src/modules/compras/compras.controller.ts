@@ -6,13 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ComprasService } from './compras.service';
 import { Prisma, Producto, Compra } from '@prisma/client';
 import { CreateCompraDTO } from './dto/compra.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('compras')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('compras')
 export class ComprasController {
   constructor(private readonly comprasService: ComprasService) {}

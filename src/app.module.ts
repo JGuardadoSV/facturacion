@@ -22,6 +22,7 @@ import { VentasService } from './modules/ventas/ventas.service';
 import { ComprasModule } from './modules/compras/compras.module';
 import { ComprasController } from './modules/compras/compras.controller';
 import { ComprasService } from './modules/compras/compras.service';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -33,25 +34,9 @@ import { ComprasService } from './modules/compras/compras.service';
     ProductosModule,
     VentasModule,
     ComprasModule,
+    AuthModule,
   ],
-  controllers: [
-    AppController,
-    UsuariosController,
-    EmpresaController,
-    ProveedorController,
-    ProductosController,
-    VentasController,
-    ComprasController,
-  ],
-  providers: [
-    AppService,
-    UsuariosService,
-    EmpresaService,
-    ClientesService,
-    ProveedoresService,
-    ProductosService,
-    VentasService,
-    ComprasService,
-  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

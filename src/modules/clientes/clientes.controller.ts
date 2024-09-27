@@ -6,13 +6,22 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateClienteDto } from './dto/cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesService } from './clientes.service';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('clientes')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('clientes')
 export class ClienteController {
   constructor(private readonly clienteService: ClientesService) {}

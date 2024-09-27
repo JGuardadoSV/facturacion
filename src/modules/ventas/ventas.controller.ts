@@ -1,10 +1,18 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { VentasService } from './ventas.service';
 import { CreateVentaDTO } from './dto/venta.dto';
 import { Venta } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Ventas')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('ventas')
 export class VentasController {
   constructor(private readonly ventasService: VentasService) {}

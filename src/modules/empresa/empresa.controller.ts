@@ -6,14 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { Prisma, Empresa } from '@prisma/client';
 import { EmpresaService } from './empresa.service';
 import { CreateEmpresaDto } from './dto/empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('empresa')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('empresa')
 export class EmpresaController {
   constructor(private readonly empresaService: EmpresaService) {}

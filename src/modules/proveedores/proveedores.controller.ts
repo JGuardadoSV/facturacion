@@ -6,13 +6,22 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateProveedorDto } from './dto/proveedor.dto';
 import { UpdateProveedorDto } from './dto/update-proveedor.dto';
 import { ProveedoresService } from './proveedores.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('proveedores')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('proveedores')
 export class ProveedorController {
   constructor(private readonly proveedoresService: ProveedoresService) {}
