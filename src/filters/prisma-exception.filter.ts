@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpStatus,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 
@@ -15,6 +20,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
           message: 'El email ya está en uso',
         });
       default:
+        console.log(exception);
         return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           message: 'Error interno del servidor',

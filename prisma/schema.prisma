@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,12 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPERADMIN // rol solo para el dueño de todo el sistema
+  USER
+  ADMIN
 }
 
 model Usuario {
@@ -23,9 +23,9 @@ model Usuario {
   rol            Role     @default(USER)
   empresaId      Int?
   empresa        Empresa? @relation(fields: [empresaId], references: [idEmpresa])
-}
 
-//****************************************
+  @@map("usuario")
+}
 
 model Empresa {
   idEmpresa        Int         @id @default(autoincrement())
@@ -42,12 +42,8 @@ model Empresa {
   ventas           Venta[] //relacion con ventas
   proveedores      Proveedor[] //relacion con proveedores
   clientes         Cliente[] //relacion con clientes
-}
 
-enum Role {
-  SUPERADMIN // rol solo para el dueño de todo el sistema
-  USER
-  ADMIN
+  @@map("empresa")
 }
 
 model Cliente {
@@ -60,6 +56,8 @@ model Cliente {
   ventas        Venta[]
   empresaId     Int? //para saber a que empresa pertenece
   Empresa       Empresa? @relation(fields: [empresaId], references: [idEmpresa])
+
+  @@map("cliente")
 }
 
 model Producto {
@@ -72,6 +70,8 @@ model Producto {
   empresa     Empresa         @relation(fields: [empresaId], references: [idEmpresa])
   ventas      VentaDetalle[]
   compras     CompraDetalle[]
+
+  @@map("producto")
 }
 
 model Venta {
@@ -84,6 +84,8 @@ model Venta {
   clienteId Int //para saber a que cliente
   Empresa   Empresa        @relation(fields: [empresaId], references: [idEmpresa])
   Cliente   Cliente        @relation(fields: [clienteId], references: [idCliente])
+
+  @@map("venta")
 }
 
 model VentaDetalle {
@@ -94,6 +96,8 @@ model VentaDetalle {
   ventaId    Int
   producto   Producto @relation(fields: [productoId], references: [id])
   venta      Venta    @relation(fields: [ventaId], references: [id])
+
+  @@map("venta_detalle")
 }
 
 model Proveedor {
@@ -108,6 +112,8 @@ model Proveedor {
   empresaId     Int? //Para saber a que empresa pertenece
   Empresa       Empresa? @relation(fields: [empresaId], references: [idEmpresa])
   compras       Compra[]
+
+  @@map("proveedor")
 }
 
 model Compra {
@@ -121,6 +127,8 @@ model Compra {
   Empresa       Empresa         @relation(fields: [empresaId], references: [idEmpresa])
   Proveedor     Proveedor       @relation(fields: [proveedorId], references: [id])
   detalles      CompraDetalle[]
+
+  @@map("compra")
 }
 
 model CompraDetalle {
@@ -131,4 +139,6 @@ model CompraDetalle {
   compraId   Int
   producto   Producto @relation(fields: [productoId], references: [id])
   compra     Compra   @relation(fields: [compraId], references: [id])
+
+  @@map("compra_detalle")
 }

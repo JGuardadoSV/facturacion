@@ -20,7 +20,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('clientes')
-@UseGuards(AuthGuard('jwt'))
+//@UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth()
 @Controller('clientes')
 export class ClienteController {
