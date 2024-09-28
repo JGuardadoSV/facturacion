@@ -7,138 +7,123 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  SUPERADMIN // rol solo para el dueño de todo el sistema
-  USER
-  ADMIN
+enum role {
+  superadmin // rol solo para el dueño de todo el sistema
+  user
+  admin
 }
 
-model Usuario {
+model usuario {
   id             Int      @id @default(autoincrement())
-  createdAt      DateTime @default(now())
+  createdat      DateTime @default(now())
   email          String   @unique
-  nombreCompleto String?
+  nombrecompleto String?
   apellidos      String?
   clave          String?
-  rol            Role     @default(USER)
-  empresaId      Int?
-  empresa        Empresa? @relation(fields: [empresaId], references: [idEmpresa])
-
-  @@map("usuario")
+  activo         Boolean? @default(true)
+  fotografia     String?
+  rol            role     @default(user)
+  empresaid      Int?
+  empresa        empresa? @relation(fields: [empresaid], references: [idempresa])
 }
 
-model Empresa {
-  idEmpresa        Int         @id @default(autoincrement())
-  nombreEmpresa    String
+model empresa {
+  idempresa        Int         @id @default(autoincrement())
+  nombreempresa    String
   direccion        String
   emailcorporativo String?
   telefono         String?
   iva              String?
   nit              String?
-  createdAt        DateTime    @default(now())
-  usuarios         Usuario[] // Relación con usuarios
-  productos        Producto[] // Relación con productos
-  compras          Compra[] //relacion con compras
-  ventas           Venta[] //relacion con ventas
-  proveedores      Proveedor[] //relacion con proveedores
-  clientes         Cliente[] //relacion con clientes
-
-  @@map("empresa")
+  createdat        DateTime    @default(now())
+  usuarios         usuario[] // Relación con usuarios
+  productos        producto[] // Relación con productos
+  compras          compra[] //relacion con compras
+  ventas           venta[] //relacion con ventas
+  proveedores      proveedor[] //relacion con proveedores
+  clientes         cliente[] //relacion con clientes
 }
 
-model Cliente {
-  idCliente     Int      @id @default(autoincrement())
-  fechaRegistro DateTime @default(now())
+model cliente {
+  idcliente     Int      @id @default(autoincrement())
+  fecharegistro DateTime @default(now())
   nombre        String
   telefono      String?
   direccion     String?
   email         String
-  ventas        Venta[]
-  empresaId     Int? //para saber a que empresa pertenece
-  Empresa       Empresa? @relation(fields: [empresaId], references: [idEmpresa])
-
-  @@map("cliente")
+  ventas        venta[]
+  empresaid     Int? //para saber a que empresa pertenece
+  empresa       empresa? @relation(fields: [empresaid], references: [idempresa])
 }
 
-model Producto {
+model producto {
   id          Int             @id @default(autoincrement())
   nombre      String
   precio      Float
   existencias Int
-  createdAt   DateTime        @default(now())
-  empresaId   Int //Para saber a que empresa pertenece
-  empresa     Empresa         @relation(fields: [empresaId], references: [idEmpresa])
-  ventas      VentaDetalle[]
-  compras     CompraDetalle[]
-
-  @@map("producto")
+  createdat   DateTime        @default(now())
+  empresaid   Int //Para saber a que empresa pertenece
+  empresa     empresa         @relation(fields: [empresaid], references: [idempresa])
+  ventas      ventadetalle[]
+  compras     compradetalle[]
 }
 
-model Venta {
+model venta {
   id        Int            @id @default(autoincrement())
-  tipoVenta Int            @default(1) // para saber si sera cf ccf exportacion, etc
+  tipoventa Int            @default(1) // para saber si sera cf ccf exportacion, etc
   fecha     DateTime       @default(now())
   total     Float
-  detalles  VentaDetalle[]
-  empresaId Int //Para saber a que empresa pertenece
-  clienteId Int //para saber a que cliente
-  Empresa   Empresa        @relation(fields: [empresaId], references: [idEmpresa])
-  Cliente   Cliente        @relation(fields: [clienteId], references: [idCliente])
-
-  @@map("venta")
+  detalles  ventadetalle[]
+  empresaid Int //Para saber a que empresa pertenece
+  clienteid Int //para saber a que cliente
+  pdf       String?
+  empresa   empresa        @relation(fields: [empresaid], references: [idempresa])
+  cliente   cliente        @relation(fields: [clienteid], references: [idcliente])
 }
 
-model VentaDetalle {
+model ventadetalle {
   id         Int      @id @default(autoincrement())
   cantidad   Int
   precio     Float
-  productoId Int
-  ventaId    Int
-  producto   Producto @relation(fields: [productoId], references: [id])
-  venta      Venta    @relation(fields: [ventaId], references: [id])
-
-  @@map("venta_detalle")
+  productoid Int
+  ventaid    Int
+  producto   producto @relation(fields: [productoid], references: [id])
+  venta      venta    @relation(fields: [ventaid], references: [id])
 }
 
-model Proveedor {
+model proveedor {
   id            Int      @id @default(autoincrement())
-  fechaRegistro DateTime @default(now())
+  fecharegistro DateTime @default(now())
   nombre        String
   email         String
   telefono      String
   direccion     String
   iva           String?
   nit           String?
-  empresaId     Int? //Para saber a que empresa pertenece
-  Empresa       Empresa? @relation(fields: [empresaId], references: [idEmpresa])
-  compras       Compra[]
-
-  @@map("proveedor")
+  empresaid     Int? //Para saber a que empresa pertenece
+  empresa       empresa? @relation(fields: [empresaid], references: [idempresa])
+  compras       compra[]
 }
 
-model Compra {
+model compra {
   id            Int             @id @default(autoincrement())
   fecha         DateTime        @default(now())
   total         Float
   iva           Float
-  numeroFactura Int
-  empresaId     Int //Para saber a que empresa pertenece
-  proveedorId   Int //Para saber a que proveedor ha comprado
-  Empresa       Empresa         @relation(fields: [empresaId], references: [idEmpresa])
-  Proveedor     Proveedor       @relation(fields: [proveedorId], references: [id])
-  detalles      CompraDetalle[]
-
-  @@map("compra")
+  numerofactura Int
+  empresaid     Int //Para saber a que empresa pertenece
+  proveedorid   Int //Para saber a que proveedor ha comprado
+  empresa       empresa         @relation(fields: [empresaid], references: [idempresa])
+  proveedor     proveedor       @relation(fields: [proveedorid], references: [id])
+  detalles      compradetalle[]
 }
 
-model CompraDetalle {
+model compradetalle {
   id         Int      @id @default(autoincrement())
   cantidad   Int
   precio     Float
-  productoId Int
-  compraId   Int
-  producto   Producto @relation(fields: [productoId], references: [id])
-  compra     Compra   @relation(fields: [compraId], references: [id])
-
-  @@map("compra_detalle")
+  productoid Int
+  compraid   Int
+  producto   producto @relation(fields: [productoid], references: [id])
+  compra     compra   @relation(fields: [compraid], references: [id])
 }

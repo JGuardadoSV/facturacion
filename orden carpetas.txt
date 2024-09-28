@@ -43,6 +43,7 @@ test/                       # Tests
 
 modificar esto
 
-npx prisma migrate dev --name productos_vent_com_proveedores
+npx prisma migrate dev --name campofotousuario
 
 
+flyctl secrets set DATABASE_URL="mysql://josuegu1_api:Soloyo1234@192.155.107.194:3306/josuegu1_api"

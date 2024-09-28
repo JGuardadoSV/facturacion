@@ -6,7 +6,7 @@ import { VentaDetalleDTO } from './ventadetalle.dto';
 export class CreateVentaDTO {
   @ApiProperty({ description: 'Tipo de venta' })
   @IsInt()
-  tipoVenta: number;
+  tipoventa: number;
 
   @ApiProperty({ description: 'Total de la venta' })
   @IsNumber()
@@ -19,9 +19,9 @@ export class CreateVentaDTO {
 
   @ApiProperty({ description: 'ID de la empresa' })
   @IsInt()
-  empresaId: number;
+  empresaid: number;
 
   @ApiProperty({ description: 'ID del cliente' })
   @IsInt()
-  clienteId: number;
+  clienteid: number;
 }

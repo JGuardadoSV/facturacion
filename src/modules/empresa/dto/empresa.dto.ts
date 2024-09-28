@@ -4,7 +4,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateEmpresaDto {
   @ApiProperty({ description: 'Nombre de la empresa' })
   @IsString()
-  nombreEmpresa: string;
+  nombreempresa: string;
 
   @ApiProperty({ description: 'Dirección de la empresa' })
   @IsString()

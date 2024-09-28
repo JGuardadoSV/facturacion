@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Empresa, Prisma } from '@prisma/client';
+import { empresa as Empresa, Prisma } from '@prisma/client';
 
-@Injectable() 
+@Injectable()
 export class EmpresaService {
   constructor(private prisma: PrismaService) {}
 
   async empresa(
-    empresaWhereUniqueInput: Prisma.EmpresaWhereUniqueInput,
+    empresaWhereUniqueInput: Prisma.empresaWhereUniqueInput,
   ): Promise<Empresa | null> {
     return this.prisma.empresa.findUnique({
       where: empresaWhereUniqueInput,
       include: {
         usuarios: true,
-      }
+      },
     });
   }
 
   async empresas(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.EmpresaWhereUniqueInput;
-    where?: Prisma.EmpresaWhereInput;
-    orderBy?: Prisma.EmpresaOrderByWithRelationInput;
+    cursor?: Prisma.empresaWhereUniqueInput;
+    where?: Prisma.empresaWhereInput;
+    orderBy?: Prisma.empresaOrderByWithRelationInput;
   }): Promise<Empresa[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.empresa.findMany({
@@ -37,15 +37,15 @@ export class EmpresaService {
     });
   }
 
-  async createEmpresa(data: Prisma.EmpresaCreateInput): Promise<Empresa> {
+  async createEmpresa(data: Prisma.empresaCreateInput): Promise<Empresa> {
     return this.prisma.empresa.create({
       data,
     });
   }
 
   async updateEmpresa(params: {
-    where: Prisma.EmpresaWhereUniqueInput;
-    data: Prisma.EmpresaUpdateInput;
+    where: Prisma.empresaWhereUniqueInput;
+    data: Prisma.empresaUpdateInput;
   }): Promise<Empresa> {
     const { where, data } = params;
     return this.prisma.empresa.update({
@@ -54,7 +54,7 @@ export class EmpresaService {
     });
   }
 
-  async deleteEmpresa(where: Prisma.EmpresaWhereUniqueInput): Promise<Empresa> {
+  async deleteEmpresa(where: Prisma.empresaWhereUniqueInput): Promise<Empresa> {
     return this.prisma.empresa.delete({
       where,
     });

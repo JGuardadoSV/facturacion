@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Producto, Prisma } from '@prisma/client';
+import { producto as Producto, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductosService {
@@ -9,7 +9,7 @@ export class ProductosService {
   async producto(idproducto: number, empresaId: number): Promise<Producto[]> {
     return this.prisma.producto.findMany({
       where: {
-        empresaId: empresaId,
+        empresaid: empresaId,
         id: idproducto,
       },
       include: {
@@ -23,9 +23,9 @@ export class ProductosService {
     params: {
       skip?: number;
       take?: number;
-      cursor?: Prisma.ProductoWhereUniqueInput;
-      where?: Prisma.ProductoWhereInput;
-      orderBy?: Prisma.ProductoOrderByWithRelationInput;
+      cursor?: Prisma.productoWhereUniqueInput;
+      where?: Prisma.productoWhereInput;
+      orderBy?: Prisma.productoOrderByWithRelationInput;
     },
   ): Promise<Producto[]> {
     const { skip, take, cursor, where, orderBy } = params;
@@ -35,7 +35,7 @@ export class ProductosService {
       cursor,
       orderBy,
       where: {
-        empresaId: empresaId,
+        empresaid: empresaId,
       },
       include: {
         // empresa: true,
@@ -43,15 +43,15 @@ export class ProductosService {
     });
   }
 
-  async createProducto(data: Prisma.ProductoCreateInput): Promise<Producto> {
+  async createProducto(data: Prisma.productoCreateInput): Promise<Producto> {
     return this.prisma.producto.create({
       data,
     });
   }
 
   async updateProducto(params: {
-    where: Prisma.ProductoWhereUniqueInput;
-    data: Prisma.ProductoUpdateInput;
+    where: Prisma.productoWhereUniqueInput;
+    data: Prisma.productoUpdateInput;
   }): Promise<Producto> {
     const { where, data } = params;
     return this.prisma.producto.update({
@@ -61,7 +61,7 @@ export class ProductosService {
   }
 
   async deleteProducto(
-    where: Prisma.ProductoWhereUniqueInput,
+    where: Prisma.productoWhereUniqueInput,
   ): Promise<Producto> {
     return this.prisma.producto.delete({
       where,

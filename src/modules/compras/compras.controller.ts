@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ComprasService } from './compras.service';
-import { Prisma, Producto, Compra } from '@prisma/client';
+import { Prisma, producto as Producto, compra as Compra } from '@prisma/client';
 import { CreateCompraDTO } from './dto/compra.dto';
 import {
   ApiTags,
@@ -34,7 +34,7 @@ export class ComprasController {
     return this.comprasService.createCompra({
       total: CreateCompraDTO.total,
       iva: CreateCompraDTO.iva,
-      numeroFactura: CreateCompraDTO.numeroFactura,
+      numerofactura: CreateCompraDTO.numeroFactura,
       detalles: {
         create: CreateCompraDTO.detalles.map((detalle) => ({
           producto: {
@@ -46,12 +46,12 @@ export class ComprasController {
           precio: detalle.precio,
         })),
       },
-      Empresa: {
+      empresa: {
         connect: {
-          idEmpresa: CreateCompraDTO.empresaId,
+          idempresa: CreateCompraDTO.empresaId,
         },
       },
-      Proveedor: {
+      proveedor: {
         connect: {
           id: CreateCompraDTO.proveedorId,
         },

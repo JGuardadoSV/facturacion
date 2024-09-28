@@ -1,5 +1,5 @@
 import { IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
-import { Role } from '@prisma/client';
+import { role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUsuarioDto {
@@ -14,7 +14,7 @@ export class CreateUsuarioDto {
   })
   @IsOptional()
   @IsString()
-  nombreCompleto?: string;
+  nombrecompleto?: string;
 
   @ApiProperty({
     example: 'Perez',
@@ -39,13 +39,13 @@ export class CreateUsuarioDto {
     description:
       'Rol del usuario. Los valores posibles son: SUPERADMIN, ADMIN, USER',
     required: false,
-    enum: Role,
+    enum: role,
   })
   @IsOptional()
-  rol?: Role;
+  rol?: role;
 
   @ApiProperty({ example: 1, description: 'ID de la empresa', required: false })
   @IsOptional()
   @IsInt()
-  empresaId?: number;
+  empresaid?: number;
 }

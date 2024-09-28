@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { VentasService } from './ventas.service';
 import { CreateVentaDTO } from './dto/venta.dto';
-import { Venta } from '@prisma/client';
+import { venta as Venta } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Ventas')
@@ -23,7 +23,7 @@ export class VentasController {
   @ApiResponse({ status: 400, description: 'Invalid input.' })
   create(@Body() createVentasDto: CreateVentaDTO) {
     return this.ventasService.createVenta({
-      tipoVenta: createVentasDto.tipoVenta,
+      tipoventa: createVentasDto.tipoventa,
       total: createVentasDto.total,
       detalles: {
         create: createVentasDto.detalles.map((detalle) => ({
@@ -36,14 +36,14 @@ export class VentasController {
           precio: detalle.precio,
         })),
       },
-      Empresa: {
+      empresa: {
         connect: {
-          idEmpresa: createVentasDto.empresaId,
+          idempresa: createVentasDto.empresaid,
         },
       },
-      Cliente: {
+      cliente: {
         connect: {
-          idCliente: createVentasDto.clienteId,
+          idcliente: createVentasDto.clienteid,
         },
       },
     });

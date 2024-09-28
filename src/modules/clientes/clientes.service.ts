@@ -1,19 +1,19 @@
 // cliente.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Cliente, Prisma } from '@prisma/client';
+import { cliente as Cliente, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ClientesService {
   constructor(private prisma: PrismaService) {}
 
   async cliente(
-    clienteWhereUniqueInput: Prisma.ClienteWhereUniqueInput,
+    clienteWhereUniqueInput: Prisma.clienteWhereUniqueInput,
   ): Promise<Cliente | null> {
     return this.prisma.cliente.findUnique({
       where: clienteWhereUniqueInput,
       include: {
-        Empresa: true,
+        empresa: true,
       },
     });
   }
@@ -21,9 +21,9 @@ export class ClientesService {
   async clientes(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.ClienteWhereUniqueInput;
-    where?: Prisma.ClienteWhereInput;
-    orderBy?: Prisma.ClienteOrderByWithRelationInput;
+    cursor?: Prisma.clienteWhereUniqueInput;
+    where?: Prisma.clienteWhereInput;
+    orderBy?: Prisma.clienteOrderByWithRelationInput;
   }): Promise<Cliente[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.cliente.findMany({
@@ -33,18 +33,18 @@ export class ClientesService {
       where,
       orderBy,
       include: {
-        Empresa: true,
+        empresa: true,
       },
     });
   }
 
-  async createCliente(data: Prisma.ClienteCreateInput): Promise<Cliente> {
+  async createCliente(data: Prisma.clienteCreateInput): Promise<Cliente> {
     return this.prisma.cliente.create({ data });
   }
 
   async updateCliente(params: {
-    where: Prisma.ClienteWhereUniqueInput;
-    data: Prisma.ClienteUpdateInput;
+    where: Prisma.clienteWhereUniqueInput;
+    data: Prisma.clienteUpdateInput;
   }): Promise<Cliente> {
     const { where, data } = params;
     return this.prisma.cliente.update({
@@ -53,7 +53,7 @@ export class ClientesService {
     });
   }
 
-  async deleteCliente(where: Prisma.ClienteWhereUniqueInput): Promise<Cliente> {
+  async deleteCliente(where: Prisma.clienteWhereUniqueInput): Promise<Cliente> {
     return this.prisma.cliente.delete({
       where,
     });

@@ -1,5 +1,5 @@
 // cliente.model.ts
-import { Empresa, Venta } from '@prisma/client';
+import { empresa as Empresa, venta as Venta } from '@prisma/client';
 
 export class Cliente {
   idCliente: number;

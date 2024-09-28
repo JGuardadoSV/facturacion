@@ -1,6 +1,6 @@
 import { IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Empresa } from '@prisma/client';
+import { empresa } from '@prisma/client';
 
 export class CreateProveedorDto {
   @ApiProperty({
@@ -56,5 +56,5 @@ export class CreateProveedorDto {
   })
   @IsOptional()
   @IsInt()
-  empresaId?: number;
+  empresaid?: number;
 }

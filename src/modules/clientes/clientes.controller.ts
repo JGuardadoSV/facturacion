@@ -46,7 +46,7 @@ export class ClienteController {
   @ApiResponse({ status: 200, description: 'Detalles del cliente.' })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   findOne(@Param('id') id: string) {
-    return this.clienteService.cliente({ idCliente: Number(id) });
+    return this.clienteService.cliente({ idcliente: Number(id) });
   }
 
   @Patch(':id')
@@ -55,7 +55,7 @@ export class ClienteController {
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
     return this.clienteService.updateCliente({
-      where: { idCliente: Number(id) },
+      where: { idcliente: Number(id) },
       data: updateClienteDto,
     });
   }
@@ -72,7 +72,7 @@ export class ClienteController {
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
     return this.clienteService.updateCliente({
-      where: { idCliente: Number(id) },
+      where: { idcliente: Number(id) },
       data: updateClienteDto,
     });
   }
@@ -82,6 +82,6 @@ export class ClienteController {
   @ApiResponse({ status: 200, description: 'El cliente ha sido eliminado.' })
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   remove(@Param('id') id: string) {
-    return this.clienteService.deleteCliente({ idCliente: Number(id) });
+    return this.clienteService.deleteCliente({ idcliente: Number(id) });
   }
 }

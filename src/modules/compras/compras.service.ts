@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, Compra } from '@prisma/client';
+import { Prisma, compra as Compra } from '@prisma/client';
 
 @Injectable()
 export class ComprasService {
   constructor(private prisma: PrismaService) {}
 
-  async createCompra(data: Prisma.CompraCreateInput): Promise<Compra> {
+  async createCompra(data: Prisma.compraCreateInput): Promise<Compra> {
     console.log(data);
     return this.prisma.compra.create({
       data,
@@ -19,17 +19,17 @@ export class ComprasService {
   async compra(idcompra: number, empresaId: number): Promise<any[]> {
     const compras = await this.prisma.compra.findMany({
       where: {
-        empresaId: empresaId,
+        empresaid: empresaId,
         id: idcompra,
       },
       include: {
-        Empresa: true,
+        empresa: true,
         detalles: {
           include: {
             producto: true,
           },
         },
-        Proveedor: true,
+        proveedor: true,
       },
     });
 
@@ -38,8 +38,8 @@ export class ComprasService {
       fecha: compra.fecha,
       total: compra.total,
       iva: compra.iva,
-      proveedorNombre: compra.Proveedor.nombre,
-      empresaNombre: compra.Empresa.nombreEmpresa,
+      proveedorNombre: compra.proveedor.nombre,
+      empresaNombre: compra.empresa.nombreempresa,
       detalles: compra.detalles.map((detalle) => ({
         cantidad: detalle.cantidad,
         precio: detalle.precio,
@@ -78,30 +78,30 @@ export class ComprasService {
 
     const compras = await this.prisma.compra.findMany({
       where: {
-        empresaId: empresaId,
+        empresaid: empresaId,
         fecha: {
           gte: fechaInicioSinHora,
           lt: new Date(fechaFinSinHora.getTime() + 24 * 60 * 60 * 1000), // Agregar un día para incluir la fecha final completa
         },
       },
       include: {
-        Empresa: true,
+        empresa: true,
         detalles: {
           include: {
             producto: true,
           },
         },
-        Proveedor: true,
+        proveedor: true,
       },
     });
 
     return compras.map((compra) => ({
       id: compra.id,
-      factura: compra.numeroFactura,
+      factura: compra.numerofactura,
       fecha: compra.fecha,
       total: compra.total,
-      proveedorNombre: compra.Proveedor.nombre,
-      empresaNombre: compra.Empresa.nombreEmpresa,
+      proveedorNombre: compra.proveedor.nombre,
+      empresaNombre: compra.empresa.nombreempresa,
       detalles: compra.detalles.map((detalle) => ({
         cantidad: detalle.cantidad,
         precio: detalle.precio,

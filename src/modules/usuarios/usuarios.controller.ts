@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsuariosService } from '../../modules/usuarios/usuarios.service';
-import { Prisma, Usuario } from '@prisma/client';
+import { Prisma, usuario as Usuario } from '@prisma/client';
 import { CreateUsuarioDto } from 'src/modules/usuarios/dto/usuario.dto';
 import { UpdateUsuarioDto } from 'src/modules/usuarios/dto/update-usuario.dto';
 import {

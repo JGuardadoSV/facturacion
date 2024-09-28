@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { Prisma, Empresa } from '@prisma/client';
+import { Prisma, empresa as Empresa } from '@prisma/client';
 import { EmpresaService } from './empresa.service';
 import { CreateEmpresaDto } from './dto/empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
@@ -48,7 +48,7 @@ export class EmpresaController {
   @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.empresaService.empresa({ idEmpresa: Number(id) });
+    return this.empresaService.empresa({ idempresa: Number(id) });
   }
 
   @ApiOperation({ summary: 'Actualizar una empresa por ID' })
@@ -57,7 +57,7 @@ export class EmpresaController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEmpresaDto: UpdateEmpresaDto) {
     return this.empresaService.updateEmpresa({
-      where: { idEmpresa: Number(id) },
+      where: { idempresa: Number(id) },
       data: updateEmpresaDto,
     });
   }
@@ -67,6 +67,6 @@ export class EmpresaController {
   @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.empresaService.deleteEmpresa({ idEmpresa: Number(id) });
+    return this.empresaService.deleteEmpresa({ idempresa: Number(id) });
   }
 }

@@ -1,4 +1,4 @@
-import { Empresa } from '@prisma/client';
+import { empresa } from '@prisma/client';
 import { IsInt, IsOptional, IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

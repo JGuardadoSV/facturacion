@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Usuario, Prisma } from '@prisma/client';
+import { usuario as Usuario, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsuariosService {
@@ -8,7 +8,7 @@ export class UsuariosService {
 
   // Método para obtener un usuario único basado en un identificador único
   async usuario(
-    usuarioWhereUniqueInput: Prisma.UsuarioWhereUniqueInput,
+    usuarioWhereUniqueInput: Prisma.usuarioWhereUniqueInput,
   ): Promise<Usuario | null> {
     return this.prisma.usuario.findUnique({
       where: usuarioWhereUniqueInput,
@@ -19,7 +19,7 @@ export class UsuariosService {
   }
 
   /* Método alternativo comentado para obtener un usuario único
-  async findUnique(where: Prisma.UsuarioWhereUniqueInput): Promise<Usuario | null> {
+  async findUnique(where: Prisma.usuarioWhereUniqueInput): Promise<usuario | null> {
     return this.prisma.usuario.findUnique({
       where,
       include: { empresa: true },
@@ -30,9 +30,9 @@ export class UsuariosService {
   async usuarios(params: {
     skip?: number; // Número de registros a omitir
     take?: number; // Número de registros a tomar
-    cursor?: Prisma.UsuarioWhereUniqueInput; // Cursor para paginación
-    where?: Prisma.UsuarioWhereInput; // Condiciones de filtrado
-    orderBy?: Prisma.UsuarioOrderByWithRelationInput; // Ordenación de los resultados
+    cursor?: Prisma.usuarioWhereUniqueInput; // Cursor para paginación
+    where?: Prisma.usuarioWhereInput; // Condiciones de filtrado
+    orderBy?: Prisma.usuarioOrderByWithRelationInput; // Ordenación de los resultados
   }): Promise<Usuario[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.usuario.findMany({
@@ -48,7 +48,7 @@ export class UsuariosService {
   }
 
   // Método para crear un nuevo usuario
-  async createUsuario(data: Prisma.UsuarioCreateInput): Promise<Usuario> {
+  async createUsuario(data: Prisma.usuarioCreateInput): Promise<Usuario> {
     return this.prisma.usuario.create({
       data,
     });
@@ -56,8 +56,8 @@ export class UsuariosService {
 
   // Método para actualizar un usuario existente
   async updateUsuario(params: {
-    where: Prisma.UsuarioWhereUniqueInput; // Identificador único del usuario a actualizar
-    data: Prisma.UsuarioUpdateInput; // Datos a actualizar
+    where: Prisma.usuarioWhereUniqueInput; // Identificador único del usuario a actualizar
+    data: Prisma.usuarioUpdateInput; // Datos a actualizar
   }): Promise<Usuario> {
     const { where, data } = params;
     return this.prisma.usuario.update({
@@ -67,7 +67,7 @@ export class UsuariosService {
   }
 
   // Método para eliminar un usuario
-  async deleteUsuario(where: Prisma.UsuarioWhereUniqueInput): Promise<Usuario> {
+  async deleteUsuario(where: Prisma.usuarioWhereUniqueInput): Promise<Usuario> {
     return this.prisma.usuario.delete({
       where,
     });
