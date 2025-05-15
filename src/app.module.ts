@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
@@ -23,9 +28,32 @@ import { ComprasModule } from './modules/compras/compras.module';
 import { ComprasController } from './modules/compras/compras.controller';
 import { ComprasService } from './modules/compras/compras.service';
 import { AuthModule } from './modules/auth/auth.module';
+import cacheConfig from './config/cache.config';
+import throttleConfig from './config/throttle.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [cacheConfig, throttleConfig],
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        ttl: configService.get('throttle.ttl'),
+        limit: configService.get('throttle.limit'),
+      }),
+      inject: [ConfigService],
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        ttl: configService.get('cache.ttl'),
+        max: configService.get('cache.max'),
+      }),
+      inject: [ConfigService],
+    }),
     UsuariosModule,
     PrismaModule,
     EmpresaModule,
@@ -37,6 +65,12 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
