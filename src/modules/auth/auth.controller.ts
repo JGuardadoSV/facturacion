@@ -15,6 +15,7 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { LoginDto, LoginResponseDto } from './dto/auth.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -22,16 +23,21 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'LOGIN' })
-  @ApiResponse({ status: 200, description: 'Login exitoso' })
-  @ApiResponse({ status: 401, description: 'Acceso no autorizado' })
-  @ApiBody({
-    schema: { example: { email: 'user@example.com', clave: 'password' } },
+  @ApiOperation({ summary: 'Iniciar sesión en el sistema' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login exitoso',
+    type: LoginResponseDto,
   })
-  async login(@Body() loginDto: { email: string; clave: string }) {
+  @ApiResponse({
+    status: 401,
+    description: 'Credenciales inválidas',
+  })
+  @ApiBody({ type: LoginDto })
+  async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
       loginDto.email,
-      loginDto.clave,
+      loginDto.password,
     );
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
@@ -42,8 +48,20 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Post('logout')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'User logout' })
-  @ApiResponse({ status: 200, description: 'Logout exitoso' })
+  @ApiOperation({ summary: 'Cerrar sesión' })
+  @ApiResponse({
+    status: 200,
+    description: 'Logout exitoso',
+    schema: {
+      example: {
+        message: 'Logout exitoso',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autorizado',
+  })
   async logout(@Request() req) {
     return this.authService.logout(req.user.userId);
   }
