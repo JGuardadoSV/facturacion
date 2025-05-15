@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -28,6 +28,7 @@ import { ComprasModule } from './modules/compras/compras.module';
 import { ComprasController } from './modules/compras/compras.controller';
 import { ComprasService } from './modules/compras/compras.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { DteModule } from './modules/dte/dte.module';
 import cacheConfig from './config/cache.config';
 import throttleConfig from './config/throttle.config';
 
@@ -39,9 +40,13 @@ import throttleConfig from './config/throttle.config';
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        ttl: configService.get('throttle.ttl'),
-        limit: configService.get('throttle.limit'),
+      useFactory: (configService: ConfigService): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: configService.get('throttle.ttl'),
+            limit: configService.get('throttle.limit'),
+          },
+        ],
       }),
       inject: [ConfigService],
     }),
@@ -63,6 +68,7 @@ import throttleConfig from './config/throttle.config';
     VentasModule,
     ComprasModule,
     AuthModule,
+    DteModule,
   ],
   controllers: [AppController],
   providers: [

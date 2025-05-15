@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { DteMhDto } from './dto/dte-mh.dto';
+import {
+  DteMhDto,
+  IdentificacionDto,
+  EmisorDto,
+  ReceptorDto,
+  CuerpoDocumentoDto,
+  ResumenDto,
+  ExtensionDto,
+} from './dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -320,5 +328,157 @@ export class DteService {
     };
 
     return dteResponse;
+  }
+
+  async generarDte(ventaId: number): Promise<DteMhDto> {
+    const venta = await this.prisma.venta.findUnique({
+      where: { id: ventaId },
+      include: {
+        empresa: true,
+        cliente: true,
+        detalles: {
+          include: {
+            producto: true,
+          },
+        },
+      },
+    });
+
+    if (!venta) {
+      throw new Error('Venta no encontrada');
+    }
+
+    const tipoDte = this.determinarTipoDte(venta.tipoventa);
+    const numeroControl = this.generarNumeroControl(
+      tipoDte,
+      venta.empresa.codEstable,
+    );
+    const codigoGeneracion = this.generarCodigoGeneracion();
+    const fecha = new Date();
+    const totales = this.calcularTotales(venta.detalles);
+
+    const dte: DteMhDto = {
+      identificacion: {
+        version: 1,
+        ambiente: '00',
+        tipoDte: tipoDte,
+        numeroControl: numeroControl,
+        codigoGeneracion: codigoGeneracion,
+        tipoModelo: 1,
+        tipoOperacion: 1,
+        tipoContingencia: null,
+        motivoContin: null,
+        fecEmi: fecha.toISOString().split('T')[0],
+        horEmi: fecha.toTimeString().split(' ')[0],
+        tipoMoneda: 'USD',
+      },
+      documentoRelacionado: null,
+      emisor: {
+        nit: venta.empresa.nit,
+        nrc: venta.empresa.nrc,
+        nombre: venta.empresa.nombreempresa,
+        codActividad: venta.empresa.codActividad,
+        descActividad: venta.empresa.descActividad,
+        nombreComercial: venta.empresa.nombreComercial,
+        tipoEstablecimiento: venta.empresa.tipoEstablecimiento,
+        direccion: {
+          departamento: venta.empresa.departamento,
+          municipio: venta.empresa.municipio,
+          complemento: venta.empresa.direccion,
+        },
+        telefono: venta.empresa.telefono,
+        codEstableMH: null,
+        codEstable: venta.empresa.codEstable,
+        codPuntoVentaMH: null,
+        codPuntoVenta: venta.empresa.codPuntoVenta,
+        correo: venta.empresa.emailcorporativo,
+      },
+      receptor: {
+        tipoDocumento: venta.cliente.tipoDocumento || '37',
+        numDocumento: venta.cliente.numDocumento || null,
+        nrc: null,
+        nombre: venta.cliente.nombre,
+        codActividad: venta.cliente.codActividad || null,
+        descActividad: venta.cliente.descActividad || null,
+        direccion: {
+          departamento: '04',
+          municipio: '35',
+          complemento: venta.cliente.direccion || 'COYOLITO',
+        },
+        telefono: venta.cliente.telefono || null,
+        correo: venta.cliente.email,
+      },
+      ventaTercero: null,
+      cuerpoDocumento: venta.detalles.map((detalle, index) => {
+        const ventaGravada = Number(detalle.cantidad * detalle.precio);
+        const ivaItem = Number(((ventaGravada / 1.13) * 0.13).toFixed(2));
+
+        return {
+          numItem: index + 1,
+          tipoItem: 1,
+          numeroDocumento: null,
+          cantidad: Number(detalle.cantidad.toFixed(6)),
+          codigo: detalle.producto.codigo || '47',
+          codTributo: null,
+          uniMedida: 59,
+          descripcion: detalle.producto.nombre,
+          precioUni: Number(detalle.precio.toFixed(6)),
+          montoDescu: 0,
+          ventaNoSuj: 0,
+          ventaExenta: 0,
+          ventaGravada: ventaGravada,
+          tributos: null,
+          psv: ventaGravada,
+          noGravado: 0,
+          ivaItem: ivaItem,
+        };
+      }),
+      resumen: {
+        totalNoSuj: 0,
+        totalExenta: 0,
+        totalGravada: totales.totalGravada,
+        subTotalVentas: totales.totalGravada,
+        descuNoSuj: 0,
+        descuExenta: 0,
+        descuGravada: 0,
+        porcentajeDescuento: 0,
+        totalDescu: 0,
+        tributos: null,
+        subTotal: totales.totalGravada,
+        ivaRete1: 0,
+        reteRenta: 0,
+        montoTotalOperacion: totales.totalGravada,
+        totalNoGravado: 0,
+        totalPagar: totales.totalGravada,
+        totalLetras: this.numeroALetras(
+          Number(totales.totalGravada.toFixed(2)),
+        ).replace(/ con \d{2}\/100 con \d{2}\/100$/, ' con $&'),
+        totalIva: totales.totalIva,
+        saldoFavor: 0,
+        condicionOperacion: 1,
+        pagos: [
+          {
+            codigo: '01',
+            montoPago: totales.totalGravada,
+            referencia: '0000',
+            periodo: null,
+            plazo: null,
+          },
+        ],
+        numPagoElectronico: '0',
+      },
+      extension: {
+        nombEntrega: 'ENCARGADO 1',
+        docuEntrega: '00000000-0',
+        nombRecibe: null,
+        docuRecibe: null,
+        observaciones: null,
+        placaVehiculo: null,
+      },
+      otrosDocumentos: null,
+      apendice: null,
+    };
+
+    return dte;
   }
 }
