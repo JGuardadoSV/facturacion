@@ -1,10 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, ValidateNested } from 'class-validator';
+import { IsArray, IsInt, IsNumber, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 import { VentaDetalleDTO } from './ventadetalle.dto';
 
 export class CreateVentaDTO {
-  @ApiProperty({ description: 'Tipo de venta' })
+  @ApiProperty({ description: 'Tipo de venta (1: CF, 2: CCF, etc.)' })
   @IsInt()
   tipoventa: number;
 
@@ -12,16 +12,13 @@ export class CreateVentaDTO {
   @IsNumber()
   total: number;
 
-  @ApiProperty({ type: [VentaDetalleDTO], description: 'Detalles de la venta' })
-  @ValidateNested({ each: true })
-  @Type(() => VentaDetalleDTO)
-  detalles: VentaDetalleDTO[];
-
-  @ApiProperty({ description: 'ID de la empresa' })
-  @IsInt()
-  empresaid: number;
-
   @ApiProperty({ description: 'ID del cliente' })
   @IsInt()
   clienteid: number;
+
+  @ApiProperty({ description: 'Detalles de la venta', type: [VentaDetalleDTO] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => VentaDetalleDTO)
+  detalles: VentaDetalleDTO[];
 }

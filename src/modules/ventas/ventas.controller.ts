@@ -9,60 +9,79 @@ import { VentasService } from './ventas.service';
 import { CreateVentaDTO } from './dto/venta.dto';
 import { venta as Venta } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @ApiTags('Ventas')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @Controller('ventas')
 export class VentasController {
   constructor(private readonly ventasService: VentasService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new sale' })
-  @ApiResponse({ status: 201, description: 'Sale created successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
-  create(@Body() createVentasDto: CreateVentaDTO) {
-    return this.ventasService.createVenta({
-      tipoventa: createVentasDto.tipoventa,
-      total: createVentasDto.total,
-      detalles: {
-        create: createVentasDto.detalles.map((detalle) => ({
-          producto: {
-            connect: {
-              id: detalle.productoId,
-            },
-          },
+  @ApiOperation({ summary: 'Crear una nueva venta' })
+  @ApiResponse({ status: 201, description: 'Venta creada exitosamente' })
+  async create(
+    @Body() createVentaDto: CreateVentaDTO,
+    @GetUser('empresaid') empresaid: number,
+  ) {
+    const venta = await this.ventasService.create(createVentaDto, empresaid);
+    return {
+      message: 'Venta creada exitosamente',
+      venta: {
+        id: venta.id,
+        tipoventa: venta.tipoventa,
+        total: venta.total,
+        fecha: venta.fecha,
+        detalles: venta.detalles.map((detalle) => ({
+          id: detalle.id,
           cantidad: detalle.cantidad,
           precio: detalle.precio,
+          productoid: detalle.productoid,
         })),
       },
-      empresa: {
-        connect: {
-          idempresa: createVentasDto.empresaid,
-        },
-      },
-      cliente: {
-        connect: {
-          idcliente: createVentasDto.clienteid,
-        },
-      },
-    });
+    };
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Obtener todas las ventas' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de ventas obtenida exitosamente',
+  })
+  async findAll(@GetUser('empresaid') empresaid: number) {
+    return this.ventasService.findAll(empresaid);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener una venta por ID' })
+  @ApiResponse({ status: 200, description: 'Venta encontrada exitosamente' })
+  @ApiResponse({ status: 404, description: 'Venta no encontrada' })
+  async findOne(
+    @Param('id') id: number,
+    @GetUser('empresaid') empresaid: number,
+  ) {
+    return this.ventasService.findOne(id, empresaid);
   }
 
   @Get(':id/:idempresa')
-  @ApiOperation({ summary: 'Get sale by ID and company ID' })
-  @ApiResponse({ status: 200, description: 'Sale retrieved successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
-  findAll(@Param('id') id: string, @Param('idempresa') idempresa: string) {
+  @ApiOperation({ summary: 'Obtener venta por ID y empresa' })
+  @ApiResponse({ status: 200, description: 'Venta obtenida exitosamente' })
+  @ApiResponse({ status: 400, description: 'Entrada inválida' })
+  async findVentaByEmpresa(
+    @Param('id') id: string,
+    @Param('idempresa') idempresa: string,
+  ) {
     const idventa = parseInt(id);
     const idempresaventa = parseInt(idempresa);
     return this.ventasService.venta(idventa, idempresaventa);
   }
 
   @Get(':empresaId/:fechaInicio/:fechaFin')
-  @ApiOperation({ summary: 'Get sales by company ID and date range' })
-  @ApiResponse({ status: 200, description: 'Sales retrieved successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid input.' })
+  @ApiOperation({ summary: 'Obtener ventas por empresa y rango de fechas' })
+  @ApiResponse({ status: 200, description: 'Ventas obtenidas exitosamente' })
+  @ApiResponse({ status: 400, description: 'Entrada inválida' })
   async getVentas(
     @Param('empresaId') empresaId: string,
     @Param('fechaInicio') fechaInicio: string,

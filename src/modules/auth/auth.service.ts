@@ -25,26 +25,27 @@ export class AuthService {
     return null;
   }
 
-  async login(usuario: any) {
+  async login(user: any) {
+    console.log('Usuario en login:', user);
     const payload = {
-      email: usuario.email,
-      sub: usuario.id,
-      rol: usuario.rol,
-      empresaid: usuario.empresaid,
+      email: user.email,
+      sub: user.id,
+      rol: user.rol,
+      empresaid: user.empresaid,
     };
-
+    console.log('Payload para token:', payload);
     return {
       access_token: this.jwtService.sign(payload),
       user: {
-        id: usuario.id,
-        email: usuario.email,
-        nombrecompleto: usuario.nombrecompleto,
-        apellidos: usuario.apellidos,
-        rol: usuario.rol,
-        empresaid: usuario.empresaid,
-        empresa: usuario.empresa,
-        activo: usuario.activo,
-        fotografia: usuario.fotografia,
+        id: user.id,
+        email: user.email,
+        nombrecompleto: user.nombrecompleto,
+        apellidos: user.apellidos,
+        rol: user.rol,
+        empresaid: user.empresaid,
+        empresa: user.empresa,
+        activo: user.activo,
+        fotografia: user.fotografia,
       },
     };
   }

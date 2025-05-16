@@ -1,19 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, venta as Venta } from '@prisma/client';
+import { CreateVentaDTO } from './dto/venta.dto';
 
 @Injectable()
 export class VentasService {
   constructor(private prisma: PrismaService) {}
 
-  async createVenta(data: Prisma.ventaCreateInput): Promise<Venta> {
-    console.log(data);
+  async create(createVentaDto: CreateVentaDTO, empresaid: number) {
     return this.prisma.venta.create({
-      data,
+      data: {
+        tipoventa: createVentaDto.tipoventa,
+        total: createVentaDto.total,
+        empresaid: empresaid,
+        clienteid: createVentaDto.clienteid,
+        detalles: {
+          create: createVentaDto.detalles.map((detalle) => ({
+            cantidad: detalle.cantidad,
+            precio: detalle.precio,
+            productoid: detalle.productoid,
+          })),
+        },
+      },
       include: {
         detalles: true,
       },
     });
+  }
+
+  async findAll(empresaid: number) {
+    return this.prisma.venta.findMany({
+      where: {
+        empresaid: empresaid,
+      },
+      include: {
+        detalles: {
+          include: {
+            producto: true,
+          },
+        },
+        cliente: true,
+      },
+    });
+  }
+
+  async findOne(id: number, empresaid: number) {
+    const venta = await this.prisma.venta.findFirst({
+      where: {
+        id: id,
+        empresaid: empresaid,
+      },
+      include: {
+        detalles: {
+          include: {
+            producto: true,
+          },
+        },
+        cliente: true,
+      },
+    });
+
+    if (!venta) {
+      throw new NotFoundException(`Venta con ID ${id} no encontrada`);
+    }
+
+    return venta;
   }
 
   async venta(idventa: number, empresaid: number): Promise<any[]> {
