@@ -15,7 +15,12 @@ export class CreateProductoDto {
   @IsInt()
   existencias: number;
 
+  @ApiProperty({ description: 'Código del producto', required: false })
+  @IsOptional()
+  @IsString()
+  codigo?: string;
+
   @ApiProperty({ description: 'ID de la empresa' })
   @IsInt()
-  empresaId: number;
+  empresaid: number;
 }

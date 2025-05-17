@@ -1,4 +1,10 @@
-import { IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsBoolean,
+} from 'class-validator';
 import { role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -48,4 +54,22 @@ export class CreateUsuarioDto {
   @IsOptional()
   @IsInt()
   empresaid?: number;
+
+  @ApiProperty({
+    example: true,
+    description: 'Estado activo del usuario',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
+
+  @ApiProperty({
+    example: 'foto.jpg',
+    description: 'Fotografía del usuario',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  fotografia?: string;
 }

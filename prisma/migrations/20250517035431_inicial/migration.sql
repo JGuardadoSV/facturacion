@@ -6,6 +6,8 @@ CREATE TABLE `usuario` (
     `nombrecompleto` VARCHAR(191) NULL,
     `apellidos` VARCHAR(191) NULL,
     `clave` VARCHAR(191) NULL,
+    `activo` BOOLEAN NULL DEFAULT true,
+    `fotografia` VARCHAR(191) NULL,
     `rol` ENUM('superadmin', 'user', 'admin') NOT NULL DEFAULT 'user',
     `empresaid` INTEGER NULL,
 
@@ -21,7 +23,17 @@ CREATE TABLE `empresa` (
     `emailcorporativo` VARCHAR(191) NULL,
     `telefono` VARCHAR(191) NULL,
     `iva` VARCHAR(191) NULL,
-    `nit` VARCHAR(191) NULL,
+    `nit` VARCHAR(191) NOT NULL,
+    `nrc` VARCHAR(191) NOT NULL,
+    `codActividad` VARCHAR(191) NOT NULL,
+    `descActividad` VARCHAR(191) NOT NULL,
+    `nombreComercial` VARCHAR(191) NULL,
+    `tipoEstablecimiento` VARCHAR(191) NOT NULL,
+    `departamento` VARCHAR(191) NOT NULL,
+    `municipio` VARCHAR(191) NOT NULL,
+    `complemento` VARCHAR(191) NOT NULL,
+    `codEstable` VARCHAR(191) NOT NULL,
+    `codPuntoVenta` VARCHAR(191) NOT NULL,
     `createdat` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`idempresa`)
@@ -35,6 +47,13 @@ CREATE TABLE `cliente` (
     `telefono` VARCHAR(191) NULL,
     `direccion` VARCHAR(191) NULL,
     `email` VARCHAR(191) NOT NULL,
+    `tipoDocumento` VARCHAR(191) NULL,
+    `numDocumento` VARCHAR(191) NULL,
+    `nrc` VARCHAR(191) NULL,
+    `codActividad` VARCHAR(191) NULL,
+    `descActividad` VARCHAR(191) NULL,
+    `departamento` VARCHAR(191) NULL,
+    `municipio` VARCHAR(191) NULL,
     `empresaid` INTEGER NULL,
 
     PRIMARY KEY (`idcliente`)
@@ -46,6 +65,7 @@ CREATE TABLE `producto` (
     `nombre` VARCHAR(191) NOT NULL,
     `precio` DOUBLE NOT NULL,
     `existencias` INTEGER NOT NULL,
+    `codigo` VARCHAR(191) NULL DEFAULT '47',
     `createdat` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `empresaid` INTEGER NOT NULL,
 

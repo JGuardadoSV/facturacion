@@ -16,6 +16,10 @@ export class CreateVentaDTO {
   @IsInt()
   clienteid: number;
 
+  @ApiProperty({ description: 'ID de la empresa' })
+  @IsInt()
+  empresaid: number;
+
   @ApiProperty({ description: 'Detalles de la venta', type: [VentaDetalleDTO] })
   @IsArray()
   @ValidateNested({ each: true })

@@ -18,7 +18,11 @@ export class VentasService {
           create: createVentaDto.detalles.map((detalle) => ({
             cantidad: detalle.cantidad,
             precio: detalle.precio,
-            productoid: detalle.productoid,
+            producto: {
+              connect: {
+                id: detalle.productoId,
+              },
+            },
           })),
         },
       },

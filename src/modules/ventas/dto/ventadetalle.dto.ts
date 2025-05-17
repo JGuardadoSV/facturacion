@@ -13,5 +13,5 @@ export class VentaDetalleDTO {
   @ApiProperty({ description: 'ID del producto' })
   @IsInt()
   @IsOptional()
-  productoid: number;
+  productoId: number;
 }

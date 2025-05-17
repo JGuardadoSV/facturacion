@@ -37,7 +37,7 @@ export class ProductosController {
       existencias: createProductoDto.existencias,
       empresa: {
         connect: {
-          idempresa: createProductoDto.empresaId,
+          idempresa: createProductoDto.empresaid,
         },
       },
     });
