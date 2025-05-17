@@ -47,3 +47,8 @@ npx prisma migrate dev --name campofotousuario
 
 
 flyctl secrets set DATABASE_URL="mysql://josuegu1_api:Soloyo1234@192.155.107.194:3306/josuegu1_api"
+
+npx prisma generate
+
+DATABASE_URL="mysql://root:Soloyo123@localhost:3306/facturacion"
+JWT_SECRET="tu_clave_secreta_jwt"
