@@ -46,11 +46,16 @@ export class ProveedoresController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Get()
   findAll(@Request() req) {
-    const empresaid = req.user.user?.empresaid;
+    console.log('Usuario autenticado completo:', req.user);
+    const empresaid = req.user.empresaid;
+
     if (!empresaid) {
+      console.error('No se encontró empresaid en el usuario:', req.user);
       throw new Error('No se encontró la empresa asociada al usuario');
     }
-    return this.proveedoresService.findAll(empresaid);
+
+    console.log('Buscando proveedores para empresa:', empresaid);
+    return this.proveedoresService.findAll(Number(empresaid));
   }
 
   @ApiOperation({ summary: 'Obtener proveedor por ID' })

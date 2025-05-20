@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CreateClienteDto } from './dto/cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -17,10 +18,10 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('clientes')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @Controller('clientes')
 export class ClienteController {
@@ -37,8 +38,17 @@ export class ClienteController {
   @Get()
   @ApiOperation({ summary: 'Obtener todos los clientes' })
   @ApiResponse({ status: 200, description: 'Lista de clientes.' })
-  findAll() {
-    return this.clienteService.clientes({});
+  findAll(@Request() req) {
+    console.log('Usuario autenticado:', req.user);
+    const empresaid = req.user.empresaid;
+
+    if (!empresaid) {
+      console.error('No se encontró empresaid en el usuario:', req.user);
+      throw new Error('No se encontró la empresa asociada al usuario');
+    }
+
+    console.log('Buscando clientes para empresa:', empresaid);
+    return this.clienteService.findAll(Number(empresaid));
   }
 
   @Get(':id')

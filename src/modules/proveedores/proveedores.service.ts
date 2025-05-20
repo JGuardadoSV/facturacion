@@ -81,14 +81,32 @@ export class ProveedoresService {
   }
 
   async findAll(empresaid: number) {
-    return this.prisma.proveedor.findMany({
+    console.log('Buscando proveedores para empresaid:', empresaid);
+
+    const proveedores = await this.prisma.proveedor.findMany({
       where: {
-        empresaid: empresaid,
+        empresaid: Number(empresaid),
       },
       include: {
-        empresa: true,
+        empresa: {
+          select: {
+            idempresa: true,
+            nombreempresa: true,
+            direccion: true,
+            emailcorporativo: true,
+            telefono: true,
+            nit: true,
+            nrc: true,
+          },
+        },
+      },
+      orderBy: {
+        nombre: 'asc',
       },
     });
+
+    console.log('Proveedores encontrados:', proveedores);
+    return proveedores;
   }
 
   async findOne(id: number) {

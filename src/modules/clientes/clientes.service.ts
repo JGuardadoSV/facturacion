@@ -101,4 +101,33 @@ export class ClientesService {
       where,
     });
   }
+
+  async findAll(empresaid: number) {
+    console.log('Buscando clientes para empresaid:', empresaid);
+
+    const clientes = await this.prisma.cliente.findMany({
+      where: {
+        empresaid: Number(empresaid),
+      },
+      include: {
+        empresa: {
+          select: {
+            idempresa: true,
+            nombreempresa: true,
+            direccion: true,
+            emailcorporativo: true,
+            telefono: true,
+            nit: true,
+            nrc: true,
+          },
+        },
+      },
+      orderBy: {
+        nombre: 'asc',
+      },
+    });
+
+    console.log('Clientes encontrados:', clientes);
+    return clientes;
+  }
 } //FIN
