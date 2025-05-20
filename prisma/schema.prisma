@@ -97,16 +97,78 @@ model venta {
   pdf       String?
   empresa   empresa        @relation(fields: [empresaid], references: [idempresa])
   cliente   cliente        @relation(fields: [clienteid], references: [idcliente])
+
+  // Nuevos campos según JSON
+  version          Int     @default(1)
+  ambiente         String  @default("00")
+  tipoDte          String  @default("01")
+  numeroControl    String? @unique
+  codigoGeneracion String? @unique
+  tipoModelo       Int     @default(1)
+  tipoOperacion    Int     @default(1)
+  tipoContingencia String?
+  motivoContin     String?
+  horEmi           String?
+  tipoMoneda       String  @default("USD")
+
+  // Campos del resumen
+  totalNoSuj          Float   @default(0)
+  totalExenta         Float   @default(0)
+  totalGravada        Float   @default(0)
+  subTotalVentas      Float   @default(0)
+  descuNoSuj          Float   @default(0)
+  descuExenta         Float   @default(0)
+  descuGravada        Float   @default(0)
+  porcentajeDescuento Float   @default(0)
+  totalDescu          Float   @default(0)
+  subTotal            Float   @default(0)
+  ivaRete1            Float   @default(0)
+  ivaPerci1           Float   @default(0)
+  reteRenta           Float   @default(0)
+  montoTotalOperacion Float   @default(0)
+  totalNoGravado      Float   @default(0)
+  totalPagar          Float   @default(0)
+  totalLetras         String?
+  totalIva            Float   @default(0)
+  saldoFavor          Float   @default(0)
+  condicionOperacion  Int     @default(1)
+  numPagoElectronico  String? @default("0")
+
+  // Campos de extensión
+  nombEntrega   String?
+  docuEntrega   String?
+  nombRecibe    String?
+  docuRecibe    String?
+  observaciones String?
+  placaVehiculo String?
 }
 
 model ventadetalle {
   id         Int      @id @default(autoincrement())
-  cantidad   Int
+  cantidad   Float // Cambiado a Float para permitir decimales
   precio     Float
   productoid Int
   ventaid    Int
   producto   producto @relation(fields: [productoid], references: [id])
   venta      venta    @relation(fields: [ventaid], references: [id])
+
+  // Nuevos campos según JSON
+  numItem         Int
+  tipoItem        Int     @default(1)
+  numeroDocumento String?
+  codigo          String?
+  codTributo      String?
+  uniMedida       Int     @default(59)
+  descripcion     String
+  precioUni       Float
+  montoDescu      Float   @default(0)
+  ventaNoSuj      Float   @default(0)
+  ventaExenta     Float   @default(0)
+  ventaGravada    Float   @default(0)
+  tributos        String? // JSON string para almacenar array de tributos
+  psv             Float   @default(0)
+  noGravado       Float   @default(0)
+  ivaItem         Float   @default(0)
 }
 
 model proveedor {
