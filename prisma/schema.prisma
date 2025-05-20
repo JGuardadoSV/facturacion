@@ -110,17 +110,30 @@ model ventadetalle {
 }
 
 model proveedor {
-  id            Int      @id @default(autoincrement())
-  fecharegistro DateTime @default(now())
-  nombre        String
-  email         String
-  telefono      String
-  direccion     String
-  iva           String?
-  nit           String?
-  empresaid     Int? //Para saber a que empresa pertenece
-  empresa       empresa? @relation(fields: [empresaid], references: [idempresa])
-  compras       compra[]
+  id                  Int      @id @default(autoincrement())
+  fecharegistro       DateTime @default(now())
+  nombre              String
+  nombreComercial     String?
+  nit                 String
+  nrc                 String?
+  codActividad        String?
+  descActividad       String?
+  direccion           String
+  telefono            String
+  email               String
+  emailcorporativo    String?
+  estado              String   @default("ACTIVO")
+  tipoProveedor       String   @default("NACIONAL")
+  departamento        String?
+  municipio           String?
+  complemento         String?
+  tipoEstablecimiento String   @default("MATRIZ")
+  codEstable          String?
+  codPuntoVenta       String?
+  iva                 String?
+  empresaid           Int
+  empresa             empresa  @relation(fields: [empresaid], references: [idempresa])
+  compras             compra[]
 }
 
 model compra {

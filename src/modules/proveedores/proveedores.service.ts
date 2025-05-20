@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { proveedor as Proveedor, Prisma } from '@prisma/client';
+import { CreateProveedorDto } from './dto/create-proveedor.dto';
 
 @Injectable()
 export class ProveedoresService {
@@ -37,9 +38,26 @@ export class ProveedoresService {
     });
   }
 
-  async createProveedor(data: Prisma.proveedorCreateInput): Promise<Proveedor> {
+  async createProveedor(createProveedorDto: CreateProveedorDto) {
+    // Primero verificamos que la empresa exista
+    const empresa = await this.prisma.empresa.findUnique({
+      where: { idempresa: createProveedorDto.empresaid },
+    });
+
+    if (!empresa) {
+      throw new Error('La empresa especificada no existe');
+    }
+
+    const { empresaid, ...proveedorData } = createProveedorDto;
+
     return this.prisma.proveedor.create({
-      data,
+      data: {
+        ...proveedorData,
+        empresaid: empresaid, // Asignamos directamente el empresaid
+      },
+      include: {
+        empresa: true,
+      },
     });
   }
 
@@ -59,6 +77,32 @@ export class ProveedoresService {
   ): Promise<Proveedor> {
     return this.prisma.proveedor.delete({
       where,
+    });
+  }
+
+  async findAll(empresaid: number) {
+    return this.prisma.proveedor.findMany({
+      where: {
+        empresaid: empresaid,
+      },
+      include: {
+        empresa: true,
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    return this.prisma.proveedor.findUnique({
+      where: { id },
+      include: {
+        empresa: true,
+      },
+    });
+  }
+
+  async remove(id: number) {
+    return this.prisma.proveedor.delete({
+      where: { id },
     });
   }
 }

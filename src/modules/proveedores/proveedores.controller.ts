@@ -7,8 +7,9 @@ import {
   Patch,
   Post,
   UseGuards,
+  Request,
 } from '@nestjs/common';
-import { CreateProveedorDto } from './dto/proveedor.dto';
+import { CreateProveedorDto } from './dto/create-proveedor.dto';
 import { UpdateProveedorDto } from './dto/update-proveedor.dto';
 import { ProveedoresService } from './proveedores.service';
 import {
@@ -17,14 +18,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('proveedores')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @Controller('proveedores')
-export class ProveedorController {
+export class ProveedoresController {
   constructor(private readonly proveedoresService: ProveedoresService) {}
+
   @ApiOperation({ summary: 'Registro de proveedor' })
   @ApiResponse({
     status: 201,
@@ -43,8 +45,12 @@ export class ProveedorController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Get()
-  findAll() {
-    return this.proveedoresService.proveedores({});
+  findAll(@Request() req) {
+    const empresaid = req.user.user?.empresaid;
+    if (!empresaid) {
+      throw new Error('No se encontró la empresa asociada al usuario');
+    }
+    return this.proveedoresService.findAll(empresaid);
   }
 
   @ApiOperation({ summary: 'Obtener proveedor por ID' })
@@ -52,7 +58,7 @@ export class ProveedorController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.proveedoresService.proveedor({ id: Number(id) });
+    return this.proveedoresService.findOne(+id);
   }
 
   @ApiOperation({ summary: 'Actualizar proveedor' })
@@ -97,6 +103,6 @@ export class ProveedorController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.proveedoresService.deleteProveedor({ id: Number(id) });
+    return this.proveedoresService.remove(+id);
   }
 }
