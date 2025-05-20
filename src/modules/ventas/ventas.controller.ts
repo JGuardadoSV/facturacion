@@ -6,7 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { VentasService } from './ventas.service';
-import { CreateVentaDTO } from './dto/venta.dto';
+import { VentaDTO } from './dto/venta.dto';
 import { venta as Venta } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -23,7 +23,7 @@ export class VentasController {
   @ApiOperation({ summary: 'Crear una nueva venta' })
   @ApiResponse({ status: 201, description: 'Venta creada exitosamente' })
   async create(
-    @Body() createVentaDto: CreateVentaDTO,
+    @Body() createVentaDto: VentaDTO,
     @GetUser('empresaid') empresaid: number,
   ) {
     const venta = await this.ventasService.create(createVentaDto, empresaid);
