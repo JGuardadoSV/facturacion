@@ -199,6 +199,11 @@ export class VentaDTO {
   @IsOptional()
   condicionOperacion?: number;
 
+  @ApiProperty({ description: 'Observaciones de la venta' })
+  @IsString()
+  @IsOptional()
+  observaciones?: string;
+
   @ApiProperty({ description: 'Número de documento' })
   @IsString()
   @IsOptional()
