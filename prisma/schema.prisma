@@ -87,60 +87,61 @@ model producto {
 }
 
 model venta {
-  id        Int            @id @default(autoincrement())
-  tipoventa Int            @default(1) // para saber si sera cf ccf exportacion, etc
-  fecha     DateTime       @default(now())
-  total     Float
-  detalles  ventadetalle[]
-  empresaid Int //Para saber a que empresa pertenece
-  clienteid Int //para saber a que cliente
-  pdf       String?
-  empresa   empresa        @relation(fields: [empresaid], references: [idempresa])
-  cliente   cliente        @relation(fields: [clienteid], references: [idcliente])
-
-  // Nuevos campos según JSON
-  version          Int     @default(1)
-  ambiente         String  @default("00")
-  tipoDte          String  @default("01")
-  numeroControl    String? @unique
-  codigoGeneracion String? @unique
-  tipoModelo       Int     @default(1)
-  tipoOperacion    Int     @default(1)
-  tipoContingencia String?
-  motivoContin     String?
-  horEmi           String?
-  tipoMoneda       String  @default("USD")
-
-  // Campos del resumen
-  totalNoSuj          Float   @default(0)
-  totalExenta         Float   @default(0)
-  totalGravada        Float   @default(0)
-  subTotalVentas      Float   @default(0)
-  descuNoSuj          Float   @default(0)
-  descuExenta         Float   @default(0)
-  descuGravada        Float   @default(0)
-  porcentajeDescuento Float   @default(0)
-  totalDescu          Float   @default(0)
-  subTotal            Float   @default(0)
-  ivaRete1            Float   @default(0)
-  ivaPerci1           Float   @default(0)
-  reteRenta           Float   @default(0)
-  montoTotalOperacion Float   @default(0)
-  totalNoGravado      Float   @default(0)
-  totalPagar          Float   @default(0)
+  id                  Int            @id @default(autoincrement())
+  tipoventa           Int            @default(1) // para saber si sera cf ccf exportacion, etc
+  fecha               DateTime       @default(now())
+  total               Float
+  empresaid           Int //Para saber a que empresa pertenece
+  clienteid           Int //para saber a que cliente
+  esGranContribuyente Boolean        @default(false)
+  metodoPago          String
+  pdf                 String?
+  version             Int            @default(1)
+  ambiente            String         @default("00")
+  tipoDte             String         @default("01")
+  numeroControl       String?        @unique
+  codigoGeneracion    String?        @unique
+  tipoModelo          Int            @default(1)
+  tipoOperacion       Int            @default(1)
+  tipoContingencia    String?
+  motivoContin        String?
+  horEmi              String?
+  tipoMoneda          String         @default("USD")
+  totalNoSuj          Float          @default(0)
+  totalExenta         Float          @default(0)
+  totalGravada        Float          @default(0)
+  subTotalVentas      Float          @default(0)
+  descuNoSuj          Float          @default(0)
+  descuExenta         Float          @default(0)
+  descuGravada        Float          @default(0)
+  porcentajeDescuento Float          @default(0)
+  totalDescu          Float          @default(0)
+  subTotal            Float          @default(0)
+  ivaRete1            Float          @default(0)
+  ivaPerci1           Float          @default(0)
+  reteRenta           Float          @default(0)
+  montoTotalOperacion Float          @default(0)
+  totalNoGravado      Float          @default(0)
+  totalPagar          Float          @default(0)
   totalLetras         String?
-  totalIva            Float   @default(0)
-  saldoFavor          Float   @default(0)
-  condicionOperacion  Int     @default(1)
-  numPagoElectronico  String? @default("0")
+  totalIva            Float          @default(0)
+  saldoFavor          Float          @default(0)
+  condicionOperacion  Int            @default(1)
+  numPagoElectronico  String?        @default("0")
+  nombEntrega         String?
+  docuEntrega         String?
+  nombRecibe          String?
+  docuRecibe          String?
+  observaciones       String?
+  placaVehiculo       String?
+  empresa             empresa        @relation(fields: [empresaid], references: [idempresa])
+  cliente             cliente        @relation(fields: [clienteid], references: [idcliente])
+  detalles            ventadetalle[]
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
 
-  // Campos de extensión
-  nombEntrega   String?
-  docuEntrega   String?
-  nombRecibe    String?
-  docuRecibe    String?
-  observaciones String?
-  placaVehiculo String?
+  @@index([empresaid])
+  @@index([clienteid])
 }
 
 model ventadetalle {

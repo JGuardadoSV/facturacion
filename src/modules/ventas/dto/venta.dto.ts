@@ -6,13 +6,15 @@ import {
   IsArray,
   IsDate,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { VentaDetalleDTO } from './ventadetalle.dto';
+import { Transform } from 'class-transformer';
 
 export enum TipoVenta {
-  CONTADO = 1,
-  CREDITO = 2,
+  CONSUMIDOR_FINAL = 1,
+  CREDITO_FISCAL = 2,
 }
 
 export class VentaDTO {
@@ -27,36 +29,49 @@ export class VentaDTO {
 
   @ApiProperty({ description: 'Fecha de la venta' })
   @IsDate()
-  fecha: Date;
+  @IsOptional()
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  fecha?: Date;
 
   @ApiProperty({ description: 'Total de la venta' })
   @IsNumber()
   total: number;
 
-  @ApiProperty({ description: 'ID del cliente' })
-  @IsInt()
-  clienteId: number;
-
   @ApiProperty({ description: 'ID de la empresa' })
   @IsInt()
-  empresaId: number;
+  empresaid: number;
+
+  @ApiProperty({ description: 'ID del cliente' })
+  @IsInt()
+  clienteid: number;
 
   @ApiProperty({ description: 'Detalles de la venta', type: [VentaDetalleDTO] })
   @IsArray()
   detalles: VentaDetalleDTO[];
 
-  // Nuevos campos para facturación
+  @ApiProperty({ description: 'Es gran contribuyente' })
+  @IsBoolean()
+  @IsOptional()
+  esGranContribuyente?: boolean;
+
+  @ApiProperty({ description: 'Método de pago' })
+  @IsString()
+  metodoPago: string;
+
   @ApiProperty({ description: 'Versión del DTE' })
   @IsInt()
-  version: number;
+  @IsOptional()
+  version?: number;
 
-  @ApiProperty({ description: 'Ambiente (PRODUCCION/PRUEBAS)' })
+  @ApiProperty({ description: 'Ambiente' })
   @IsString()
-  ambiente: string;
+  @IsOptional()
+  ambiente?: string;
 
   @ApiProperty({ description: 'Tipo de DTE' })
   @IsString()
-  tipoDte: string;
+  @IsOptional()
+  tipoDte?: string;
 
   @ApiProperty({ description: 'Número de control' })
   @IsString()
@@ -70,12 +85,15 @@ export class VentaDTO {
 
   @ApiProperty({ description: 'Tipo de modelo' })
   @IsInt()
-  tipoModelo: number;
+  @IsOptional()
+  tipoModelo?: number;
 
   @ApiProperty({ description: 'Tipo de operación' })
   @IsInt()
-  tipoOperacion: number;
+  @IsOptional()
+  tipoOperacion?: number;
 
+  // Nuevos campos para facturación
   @ApiProperty({ description: 'Tipo de contingencia' })
   @IsString()
   @IsOptional()
@@ -146,6 +164,11 @@ export class VentaDTO {
   @IsOptional()
   ivaRete1?: number;
 
+  @ApiProperty({ description: 'IVA percibido' })
+  @IsNumber()
+  @IsOptional()
+  ivaPerci1?: number;
+
   @ApiProperty({ description: 'Rete renta' })
   @IsNumber()
   @IsOptional()
@@ -156,10 +179,20 @@ export class VentaDTO {
   @IsOptional()
   montoTotalOperacion?: number;
 
+  @ApiProperty({ description: 'Total a pagar' })
+  @IsNumber()
+  @IsOptional()
+  totalPagar?: number;
+
   @ApiProperty({ description: 'Total letras' })
   @IsString()
   @IsOptional()
   totalLetras?: string;
+
+  @ApiProperty({ description: 'Total IVA' })
+  @IsNumber()
+  @IsOptional()
+  totalIva?: number;
 
   @ApiProperty({ description: 'Condición de operación' })
   @IsInt()

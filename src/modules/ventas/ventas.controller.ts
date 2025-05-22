@@ -11,6 +11,7 @@ import { venta as Venta } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { Transform } from 'class-transformer';
 
 @ApiTags('Ventas')
 @UseGuards(JwtAuthGuard)
@@ -22,26 +23,13 @@ export class VentasController {
   @Post()
   @ApiOperation({ summary: 'Crear una nueva venta' })
   @ApiResponse({ status: 201, description: 'Venta creada exitosamente' })
-  async create(
-    @Body() createVentaDto: VentaDTO,
-    @GetUser('empresaid') empresaid: number,
-  ) {
-    const venta = await this.ventasService.create(createVentaDto, empresaid);
-    return {
-      message: 'Venta creada exitosamente',
-      venta: {
-        id: venta.id,
-        tipoventa: venta.tipoventa,
-        total: venta.total,
-        fecha: venta.fecha,
-        detalles: venta.detalles.map((detalle) => ({
-          id: detalle.id,
-          cantidad: detalle.cantidad,
-          precio: detalle.precio,
-          productoid: detalle.productoid,
-        })),
-      },
-    };
+  @ApiResponse({ status: 400, description: 'Entrada inválida' })
+  async create(@Body() ventaDTO: VentaDTO) {
+    // Transformar la fecha si viene como string
+    if (typeof ventaDTO.fecha === 'string') {
+      ventaDTO.fecha = new Date(ventaDTO.fecha);
+    }
+    return this.ventasService.create(ventaDTO);
   }
 
   @Get()

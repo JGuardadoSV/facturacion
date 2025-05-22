@@ -8,6 +8,7 @@ import { EmpresaModule } from './modules/empresa/empresa.module';
 import { ProductosModule } from './modules/productos/productos.module';
 import { ClientesModule } from './modules/clientes/clientes.module';
 import { ProveedoresModule } from './modules/proveedores/proveedores.module';
+import { VentasModule } from './modules/ventas/ventas.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProveedoresModule } from './modules/proveedores/proveedores.module';
     ProductosModule,
     ClientesModule,
     ProveedoresModule,
+    VentasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

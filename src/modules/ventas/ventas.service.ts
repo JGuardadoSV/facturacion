@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, venta as Venta } from '@prisma/client';
 import { VentaDTO } from './dto/venta.dto';
@@ -7,75 +11,125 @@ import { VentaDTO } from './dto/venta.dto';
 export class VentasService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createVentaDto: VentaDTO, empresaId: number) {
-    return this.prisma.venta.create({
-      data: {
-        tipoventa: Number(createVentaDto.tipoVenta),
-        fecha: createVentaDto.fecha,
-        total: createVentaDto.total,
-        empresaid: empresaId,
-        clienteid: createVentaDto.clienteId,
-        // Nuevos campos para facturación
-        version: Number(createVentaDto.version),
-        ambiente: createVentaDto.ambiente,
-        tipoDte: createVentaDto.tipoDte,
-        numeroControl: createVentaDto.numeroControl,
-        codigoGeneracion: createVentaDto.codigoGeneracion,
-        tipoModelo: Number(createVentaDto.tipoModelo),
-        tipoOperacion: Number(createVentaDto.tipoOperacion),
-        tipoContingencia: createVentaDto.tipoContingencia,
-        motivoContin: createVentaDto.motivoContin,
-        horEmi: createVentaDto.horEmi,
-        tipoMoneda: createVentaDto.tipoMoneda,
-        // Campos de resumen
-        totalNoSuj: createVentaDto.totalNoSuj || 0,
-        totalExenta: createVentaDto.totalExenta || 0,
-        totalGravada: createVentaDto.totalGravada || 0,
-        subTotalVentas: createVentaDto.subTotalVentas || 0,
-        descuNoSuj: createVentaDto.descuNoSuj || 0,
-        descuExenta: createVentaDto.descuExenta || 0,
-        descuGravada: createVentaDto.descuGravada || 0,
-        totalDescu: createVentaDto.totalDescu || 0,
-        subTotal: createVentaDto.subTotal || 0,
-        ivaRete1: createVentaDto.ivaRete1 || 0,
-        reteRenta: createVentaDto.reteRenta || 0,
-        montoTotalOperacion: createVentaDto.montoTotalOperacion || 0,
-        totalLetras: createVentaDto.totalLetras,
-        condicionOperacion: Number(createVentaDto.condicionOperacion) || 1,
-        detalles: {
-          create: createVentaDto.detalles.map((detalle) => ({
-            cantidad: detalle.cantidad,
-            precio: detalle.precio,
-            numItem: detalle.numItem,
-            tipoItem: detalle.tipoItem || 1,
-            numeroDocumento: detalle.numeroDocumento,
-            codigo: detalle.codigo,
-            codTributo: detalle.codTributo,
-            uniMedida: detalle.uniMedida || 59,
-            descripcion: detalle.descripcion,
-            precioUni: detalle.precioUni,
-            montoDescu: detalle.montoDescu || 0,
-            ventaNoSuj: detalle.ventaNoSuj || 0,
-            ventaExenta: detalle.ventaExenta || 0,
-            ventaGravada: detalle.ventaGravada || 0,
-            tributos: detalle.tributos
-              ? JSON.stringify(detalle.tributos)
-              : null,
-            psv: detalle.psv || 0,
-            noGravado: detalle.noGravado || 0,
-            ivaItem: detalle.ivaItem || 0,
-            producto: {
-              connect: {
-                id: detalle.productoId,
+  async create(ventaDTO: VentaDTO) {
+    try {
+      const { detalles, tipoVenta, esGranContribuyente, ...ventaData } =
+        ventaDTO;
+      console.log('Datos de venta recibidos:', ventaDTO);
+
+      // Calcular totales
+      const totalGravada = detalles.reduce(
+        (sum, detalle) => sum + (detalle.ventaGravada || 0),
+        0,
+      );
+      const totalExenta = detalles.reduce(
+        (sum, detalle) => sum + (detalle.ventaExenta || 0),
+        0,
+      );
+      const totalNoSuj = detalles.reduce(
+        (sum, detalle) => sum + (detalle.ventaNoSuj || 0),
+        0,
+      );
+      const totalDescu = detalles.reduce(
+        (sum, detalle) => sum + (detalle.montoDescu || 0),
+        0,
+      );
+      const totalIva = detalles.reduce(
+        (sum, detalle) => sum + (detalle.ivaItem || 0),
+        0,
+      );
+
+      // Calcular subtotales
+      const subTotalVentas = totalGravada + totalExenta + totalNoSuj;
+      const subTotal = subTotalVentas - totalDescu;
+
+      // Calcular montos finales
+      const montoTotalOperacion = subTotal + totalIva;
+      const totalPagar = montoTotalOperacion;
+
+      // Crear la venta con sus detalles en una transacción
+      return await this.prisma.$transaction(async (prisma) => {
+        try {
+          // Crear la venta
+          const venta = await prisma.venta.create({
+            data: {
+              ...ventaData,
+              tipoventa: tipoVenta,
+              // Campos calculados
+              totalGravada: ventaData.totalGravada || 0,
+              totalExenta: ventaData.totalExenta || 0,
+              totalNoSuj: ventaData.totalNoSuj || 0,
+              subTotalVentas: ventaData.subTotalVentas || 0,
+              descuNoSuj: ventaData.descuNoSuj || 0,
+              descuExenta: ventaData.descuExenta || 0,
+              descuGravada: ventaData.descuGravada || 0,
+              totalDescu: ventaData.totalDescu || 0,
+              subTotal: ventaData.subTotal || 0,
+              ivaRete1: ventaData.ivaRete1 || 0,
+              ivaPerci1: esGranContribuyente ? ventaData.ivaPerci1 || 0 : 0,
+              reteRenta: ventaData.reteRenta || 0,
+              montoTotalOperacion: ventaData.montoTotalOperacion || 0,
+              totalPagar: ventaData.totalPagar || 0,
+              totalLetras: ventaData.totalLetras,
+              totalIva: ventaData.totalIva || 0,
+              // Campos opcionales con valores por defecto
+              condicionOperacion: ventaData.condicionOperacion || 1,
+              detalles: {
+                create: detalles.map((detalle, index) => ({
+                  productoid: detalle.productoid,
+                  cantidad: detalle.cantidad,
+                  precio: detalle.precio,
+                  montoDescu: detalle.montoDescu || 0,
+                  numItem: index + 1,
+                  descripcion: detalle.descripcion || '',
+                  precioUni: detalle.precio,
+                  codigo: detalle.codigo || '',
+                  uniMedida: detalle.uniMedida || 1,
+                  ventaGravada: detalle.ventaGravada || 0,
+                  ventaExenta: detalle.ventaExenta || 0,
+                  ventaNoSuj: detalle.ventaNoSuj || 0,
+                  noGravado: detalle.noGravado || 0,
+                  psv: detalle.psv || 0,
+                  ivaItem: detalle.ivaItem || 0,
+                })),
               },
             },
-          })),
-        },
-      },
-      include: {
-        detalles: true,
-      },
-    });
+            include: {
+              detalles: {
+                include: {
+                  producto: true,
+                },
+              },
+              cliente: true,
+            },
+          });
+
+          // Actualizar el stock de los productos
+          for (const detalle of detalles) {
+            await prisma.producto.update({
+              where: { id: detalle.productoid },
+              data: {
+                existencias: {
+                  decrement: detalle.cantidad,
+                },
+              },
+            });
+          }
+
+          return venta;
+        } catch (error) {
+          console.error('Error en la transacción:', error);
+          throw new InternalServerErrorException(
+            `Error al crear la venta: ${error.message}`,
+          );
+        }
+      });
+    } catch (error) {
+      console.error('Error en el servicio de ventas:', error);
+      throw new InternalServerErrorException(
+        `Error al procesar la venta: ${error.message}`,
+      );
+    }
   }
 
   async findAll(empresaId: number) {

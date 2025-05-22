@@ -8,18 +8,27 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class VentaDetalleDTO {
+  @ApiProperty({ description: 'ID del detalle' })
+  @IsInt()
+  @IsOptional()
+  id?: number;
+
+  @ApiProperty({ description: 'ID del producto' })
+  @IsInt()
+  productoid: number;
+
   @ApiProperty({ description: 'Cantidad del producto' })
   @IsNumber()
   cantidad: number;
 
-  @ApiProperty({ description: 'Precio del producto' })
+  @ApiProperty({ description: 'Precio unitario' })
   @IsNumber()
   precio: number;
 
-  @ApiProperty({ description: 'ID del producto' })
-  @IsInt()
+  @ApiProperty({ description: 'Descuento por unidad' })
+  @IsNumber()
   @IsOptional()
-  productoId: number;
+  descuento?: number;
 
   @ApiProperty({ description: 'Número de ítem' })
   @IsInt()
